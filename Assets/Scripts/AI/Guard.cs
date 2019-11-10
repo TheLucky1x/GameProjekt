@@ -9,9 +9,21 @@ public class Guard : MonoBehaviour
   public float waitTime = .3f; // Time to wait when he reached a waypoint
   public float turnSpeed = 90; // the amount of degrees he can rotate in a second
 
+  public Light spotlight; // The flashlight
+  public float viewDistance; // How far he is able to "see"
+  public LayerMask viewMask; // The mask to check if an object is in line of sight
+  float viewAngle; // The angle/fow he has, this is set by the spotAngle of the spotlight
+
   public Transform pathHolder; // The object that has all of the different waypoints
+  Transform player;
+  Color originalSpotlightColor; // The originalSpotlightColor
 
   void Start() {
+
+    player = GameObject.FindGameObjectWithTag("Player").transform; // Find and set the object with the "player" tag as the variable player
+    viewAngle = spotlight.spotAngle; // Set the viewAngle of the Guard
+    originalSpotlightColor = spotlight.color; // Set the originalSpotlightColor
+
     Vector3[] waypoints = new Vector3[pathHolder.childCount];
     for (int i = 0; i < waypoints.Length; i ++) /* Going through all the different waypoints */ {
       waypoints[i] = pathHolder.GetChild (i).position; // Get the different positions of the waypoints
@@ -19,6 +31,28 @@ public class Guard : MonoBehaviour
     }
 
     StartCoroutine(FollowPath(waypoints)); // Starting the "Function" or Coroutine for following the path
+  }
+
+  void Update() {
+    if (CanSeePlayer()) {
+      spotlight.color = Color.red; // if we can see the player, set the color to red
+    }
+    else {
+      spotlight.color = originalSpotlightColor; // Set the color back to the original color
+    }
+  }
+
+  bool CanSeePlayer() {
+    if (Vector3.Distance(transform.position,player.position) < viewDistance) /* Checking if the player is in viewDistance or not */ {
+      Vector3 dirToPlayer = (player.position - transform.position).normalized; // Get the direction to the player
+      float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward,dirToPlayer); // Get the smallest angle between guard and player
+      if (angleBetweenGuardAndPlayer < viewAngle / 2f) /* checking if the angle between the guard and the player is smaller then the viewAngle/2 */ {
+        if (!Physics.Linecast(transform.position,player.position,viewMask)) /* checking if we hit anything except the player, if not do the next thing */ {
+          return true; // when everything is correct, is he we able to see the player
+        }
+      }
+    }
+    return false; // if something is in the way, the player isnt in the view distance or if the player isnt in the viewAngle then we cant see him
   }
 
   // Creating the Function for following the path
@@ -62,5 +96,8 @@ public class Guard : MonoBehaviour
       previousPosition = waypoint.position;
     }
     Gizmos.DrawLine(previousPosition,startPosition); // Draw a line between the first and the last waypoint
+
+    Gizmos.color = Color.red;
+    Gizmos.DrawRay(transform.position,transform.forward * viewDistance);
   }
 }
