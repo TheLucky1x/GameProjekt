@@ -49,7 +49,7 @@ public class Guard : MonoBehaviour
       //spotlight.color = originalSpotlightColor; // Set the color back to the original color if we can't see the player
     }
     playerVisibleTimer = Mathf.Clamp(playerVisibleTimer,0,timeToSpotPlayer); // Clamp the time between 0 and the max (timeToSpotPlayer)
-    spotlight.color = Color.Lerp(originalSpotlightColor,Color.red,playerVisibleTimer/timeToSpotPlayer); // Change the color depending on if the player is visible or not
+    spotlight.color = Color.Lerp(originalSpotlightColor,Color.red,playerVisibleTimer/timeToSpotPlayer); // Change the color depending on if the player is visible or not, the color doesn't change instant but "moves" from the original color to the new color
 
     if (playerVisibleTimer >= timeToSpotPlayer) /* If the timer has reached the max value (timeToSpotPlayer) do the following */ {
       if (OnGuardHasSpottedPlayer != null) {
