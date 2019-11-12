@@ -17,10 +17,25 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 velocity; // Our move speed in the end
     bool isGrounded; // To check if we are on the ground or not
+    bool disabled; // To disable the controlls, for example if a guard detects us
+
+    void Start() {
+      Guard.OnGuardHasSpottedPlayer += Disable;
+    }
 
     // Update is called once per frame
     void Update()
     {
+
+        // calculating the Movement depending on the input and where we look
+        float x = Input.GetAxis("Horizontal"); // Our Horizontal movement input
+        float z = Input.GetAxis("Vertical"); // Our Vertical movement input
+
+        Vector3 move = Vector3.zero; // Setting "move" on zero
+        if (!disabled) {
+          move = transform.right * x + transform.forward * z; // Only if we aren't disabled are we allowed to move
+        }
+
         // Checking if Player is on the ground or not
         isGrounded = Physics.CheckSphere(groundCheck.position,groundDistance,groundMask); // Creating a sphere around our object with the informations from above
 
@@ -28,11 +43,7 @@ public class PlayerMovement : MonoBehaviour
           velocity.y = -2f;
         }
 
-        // calculating the Movement depending on the input and where we look
-        float x = Input.GetAxis("Horizontal"); // Our Horizontal movement input
-        float z = Input.GetAxis("Vertical"); // Our Vertical movement input
 
-        Vector3 move = transform.right * x + transform.forward * z;
 
         controller.Move(move * speed * Time.deltaTime);
 
@@ -45,4 +56,13 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime); // Move on the x and z axes (left/right)
     }
+
+    void Disable() {
+      disabled = true;
+    }
+
+    void OnDestroy() {
+      Guard.OnGuardHasSpottedPlayer -= Disable;
+    }
+
 }
