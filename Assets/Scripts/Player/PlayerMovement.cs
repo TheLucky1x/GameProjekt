@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
+    public event System.Action OnReachedEndOfLevel;
+
     public CharacterController controller; // The Player itself
 
     public float speed = 12f; // Movement speed
@@ -54,6 +56,15 @@ public class PlayerMovement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime; // Move on the y axes (up/down (jump))
 
         controller.Move(velocity * Time.deltaTime); // Move on the x and z axes (left/right)
+    }
+
+    void OnTriggerEnter(Collider hitCollider) {
+      if (hitCollider.tag == "Finish") {
+        Disable();
+        if (OnReachedEndOfLevel != null) {
+          OnReachedEndOfLevel();
+        }
+      }
     }
 
     void Disable() {
