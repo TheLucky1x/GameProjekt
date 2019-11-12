@@ -5,14 +5,19 @@ using UnityEngine;
 public class Guard : MonoBehaviour
 {
 
+  public static event System.Action OnGuardHasSpottedPlayer;
+
   public float speed = 5f; // Move speed
   public float waitTime = .3f; // Time to wait when he reached a waypoint
   public float turnSpeed = 90; // the amount of degrees he can rotate in a second
+  public float timeToSpotPlayer = 0.5f; // The amount of time the Guard needs to actually "see" the player
 
   public Light spotlight; // The flashlight
   public float viewDistance; // How far he is able to "see"
   public LayerMask viewMask; // The mask to check if an object is in line of sight
+
   float viewAngle; // The angle/fow he has, this is set by the spotAngle of the spotlight
+  float playerVisibleTimer; // The duration the player is visible
 
   public Transform pathHolder; // The object that has all of the different waypoints
   Transform player;
@@ -34,11 +39,22 @@ public class Guard : MonoBehaviour
   }
 
   void Update() {
+
     if (CanSeePlayer()) {
-      spotlight.color = Color.red; // if we can see the player, set the color to red
+      playerVisibleTimer += Time.deltaTime; // Add time to the counter if the player is visible
+      //spotlight.color = Color.red; // if we can see the player, set the color to red
     }
     else {
-      spotlight.color = originalSpotlightColor; // Set the color back to the original color
+      playerVisibleTimer -= Time.deltaTime; // Remove time from the counter if the player isnt visible
+      //spotlight.color = originalSpotlightColor; // Set the color back to the original color if we can't see the player
+    }
+    playerVisibleTimer = Mathf.Clamp(playerVisibleTimer,0,timeToSpotPlayer); // Clamp the time between 0 and the max (timeToSpotPlayer)
+    spotlight.color = Color.Lerp(originalSpotlightColor,Color.red,playerVisibleTimer/timeToSpotPlayer); // Change the color depending on if the player is visible or not
+
+    if (playerVisibleTimer >= timeToSpotPlayer) /* If the timer has reached the max value (timeToSpotPlayer) do the following */ {
+      if (OnGuardHasSpottedPlayer != null) {
+        OnGuardHasSpottedPlayer ();
+      }
     }
   }
 
