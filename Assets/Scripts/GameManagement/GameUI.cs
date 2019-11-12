@@ -35,6 +35,6 @@ public class GameUI : MonoBehaviour
     void OnGameOver (GameObject gameOverUI) /* use the object that we get from above */ {
       gameOverUI.SetActive (true);
       gameIsOver = true;
-      Guard.OnGuardHasSpottedPlayer -=ShowGameLoseUI;
+      Guard.OnGuardHasSpottedPlayer -=ShowGameLoseUI; // Unsubscribe to avoid errors
     }
 }
