@@ -20,19 +20,18 @@ public class PlayerMovement : MonoBehaviour
     bool disabled; // To disable the controlls, for example if a guard detects us
 
     void Start() {
-      Guard.OnGuardHasSpottedPlayer += Disable;
+      Guard.OnGuardHasSpottedPlayer += Disable; // "Subscribe" our selfmade function called "Disable" to the function "OnGuardHasSpottedPlayer" inside the Guard script
     }
 
     // Update is called once per frame
     void Update()
     {
-
         // calculating the Movement depending on the input and where we look
         float x = Input.GetAxis("Horizontal"); // Our Horizontal movement input
         float z = Input.GetAxis("Vertical"); // Our Vertical movement input
 
         Vector3 move = Vector3.zero; // Setting "move" on zero
-        if (!disabled) {
+        if (!disabled) /* If we're NOT disabled, do the following */ {
           move = transform.right * x + transform.forward * z; // Only if we aren't disabled are we allowed to move
         }
 
@@ -58,11 +57,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Disable() {
-      disabled = true;
+      disabled = true; // Set disabled to true so we can't move anymore
     }
 
     void OnDestroy() {
-      Guard.OnGuardHasSpottedPlayer -= Disable;
+      Guard.OnGuardHasSpottedPlayer -= Disable; // To avoid getting errors we're unsubscribing our function because the object no longer exists
     }
 
 }
