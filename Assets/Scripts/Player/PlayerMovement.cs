@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
+    //Rigidbody rigidbody;
+
     public event System.Action OnReachedEndOfLevel;
 
     public CharacterController controller; // The Player itself
@@ -23,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Start() {
       Guard.OnGuardHasSpottedPlayer += Disable; // "Subscribe" our selfmade function called "Disable" to the function "OnGuardHasSpottedPlayer" inside the Guard script
+      //rigidbody = GetComponent<Rigidbody>();
+
     }
 
     // Update is called once per frame
@@ -56,6 +60,10 @@ public class PlayerMovement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime; // Move on the y axes (up/down (jump))
 
         controller.Move(velocity * Time.deltaTime); // Move on the x and z axes (left/right)
+    }
+
+    void FixedUpdate() {
+      //rigidbody.MovePosition(rigidbody.position + velocity * Time.fixedDeltaTime);
     }
 
     void OnTriggerEnter(Collider hitCollider) {
