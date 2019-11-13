@@ -35,6 +35,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 move = Vector3.zero; // Setting "move" on zero
         if (!disabled) /* If we're NOT disabled, do the following */ {
           move = transform.right * x + transform.forward * z; // Only if we aren't disabled are we allowed to move
+          
+            // Jumping and gravity calculations
+            //if(Input.GetButtonDown("Jump") && isGrounded) /* If we're on the ground and press the jump button (standard: space), jump */ {
+                //velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            }
         }
 
         // Checking if Player is on the ground or not
