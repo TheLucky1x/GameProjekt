@@ -13,9 +13,9 @@ TagManager:
   - UI
   - 
   - 
-  - Ground
-  - Obstacles
-  - Targets
+  - PostProcessing
+  - Bullet_Ignore
+  - 
   - 
   - 
   - 
